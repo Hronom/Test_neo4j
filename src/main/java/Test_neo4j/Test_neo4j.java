@@ -1,4 +1,4 @@
-package TestNeo4J;
+package Test_neo4j;
 
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -8,15 +8,15 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-public class TestNeo4J {
+public class Test_neo4j {
     // Path to Neo4j database files.
-    private static String database_path = "neo4j_db";
+    private static String databasePath = "neo4j_db";
     // Neo4j attributes.
     private final GraphDatabaseService database;
 
-    public TestNeo4J() {
+    public Test_neo4j() {
         // Open database.
-        database = new GraphDatabaseFactory().newEmbeddedDatabase(database_path);
+        database = new GraphDatabaseFactory().newEmbeddedDatabase(databasePath);
 
         // Registers a shutdown hook for the Neo4j instance so that it
         // shuts down nicely when the VM exits (even if you "Ctrl-C" the
@@ -86,6 +86,6 @@ public class TestNeo4J {
     }
 
     public static void main(String[] args) {
-        TestNeo4J testNeo4J = new TestNeo4J();
+        Test_neo4j test_neo4j = new Test_neo4j();
     }
 }

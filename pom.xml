@@ -8,7 +8,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>TestNeo4J</name>
+    <name>Test_neo4j</name>
     <url>http://maven.apache.org</url>
 
     <properties>
