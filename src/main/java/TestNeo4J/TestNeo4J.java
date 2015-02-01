@@ -1,4 +1,4 @@
-package Test_neo4j;
+package TestNeo4J;
 
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
