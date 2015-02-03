@@ -8,6 +8,10 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.kernel.GraphDatabaseAPI;
+import org.neo4j.server.WrappingNeoServerBootstrapper;
+import org.neo4j.server.configuration.Configurator;
+import org.neo4j.server.configuration.ServerConfigurator;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 public class Test_neo4j {
@@ -15,6 +19,8 @@ public class Test_neo4j {
     private static String databasePath = "neo4j_db";
     // Neo4j attributes.
     private final GraphDatabaseService database;
+
+    private WrappingNeoServerBootstrapper neoServerBootstrapper;
 
     enum RelationshipTypes implements RelationshipType {
         Child,
@@ -32,6 +38,7 @@ public class Test_neo4j {
             new Thread() {
                 @Override
                 public void run() {
+                    neoServerBootstrapper.stop();
                     database.shutdown();
                 }
             }
@@ -42,6 +49,23 @@ public class Test_neo4j {
         printAllLabels();
         System.out.println();
         printAllNodes();
+
+        try {
+            GraphDatabaseAPI api = (GraphDatabaseAPI) database;
+
+            ServerConfigurator config = new ServerConfigurator(api);
+            config.configuration().addProperty(
+                Configurator.WEBSERVER_ADDRESS_PROPERTY_KEY, Configurator.DEFAULT_WEBSERVER_ADDRESS
+            );
+            config.configuration().addProperty(
+                Configurator.WEBSERVER_PORT_PROPERTY_KEY, Configurator.DEFAULT_WEBSERVER_PORT
+            );
+
+            neoServerBootstrapper = new WrappingNeoServerBootstrapper(api, config);
+            neoServerBootstrapper.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createTestData() {
@@ -50,17 +74,14 @@ public class Test_neo4j {
 
             Label label = DynamicLabel.label("test_node");
 
-            Node node1 = database.createNode();
+            Node node1 = database.createNode(label);
             node1.setProperty("name", "Test 1");
-            node1.addLabel(label);
 
-            Node node2 = database.createNode();
+            Node node2 = database.createNode(label);
             node2.setProperty("name", "Test 2");
-            node2.addLabel(label);
 
-            Node node3 = database.createNode();
+            Node node3 = database.createNode(label);
             node3.setProperty("name", "Test 3");
-            node3.addLabel(label);
 
             node1.createRelationshipTo(node2, RelationshipTypes.Child);
             node1.createRelationshipTo(node3, RelationshipTypes.Child);
